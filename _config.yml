@@ -1,16 +1,16 @@
 # Configurations
-title:            Jekyll Gitbook
-longtitle:        Jekyll Gitbook
-author:           HE Tao
-email:            sighingnow@gmail.com
+title:            Saber5203's Blog
+longtitle:        Saber5203's Blog
+author:           saber5203
+email:            yanf_shi@163.com
 description: >
-  Build Jekyll site with the GitBook style.
+  该网站用于存放saber5203的个人笔记😀。
 
 version:          1.0
 gitbook_version:  3.2.3
 
-url:              'https://sighingnow.github.io'
-baseurl:          '/jekyll-gitbook'
+url:              'https://saber5203.github.io'
+baseurl:          '/'
 rss:              RSS
 
 # bootstrap: use the remote theme for the site itself
@@ -22,7 +22,7 @@ toc:
   h_max:   3
 
 # customize the link favicon in header, will be {{site.baseurl}}/{{site.favicon_path}}
-favicon_path:     /assets/gitbook/images/favicon.ico
+favicon_path:     assets/gitbook/images/favicon.ico
 
 # markdown render engine.
 markdown:         kramdown
