@@ -40,20 +40,14 @@ syntax_highlighter_style: colorful
 
 markdown_ext:             markdown,mkdown,mkdn,mkd,md
 
-# Permalinks
-permalink:                /:title:output_ext
-
-# Disqus comments
-# disqushandler:            sighingnow
-
 exclude:
   - _drafts
 
 collections:
-  pages:
+  contents:
     output: true
     permalink: /:collection/:title:output_ext
-  others:
+  helps:
     output: true
     permalink: /:collection/:title:output_ext
   paper_reading:
@@ -61,10 +55,9 @@ collections:
     permalink: /:collection/:title:output_ext
 
 ordered_collections:
-  - posts
-  - others
+  - contents
   - paper_reading
-  - pages
+  - helps
 
 page_width: 800px
 
