@@ -40,22 +40,22 @@ syntax_highlighter_style: colorful
 
 markdown_ext:             markdown,mkdown,mkdn,mkd,md
 
+# Permalinks
+permalink:                /:title
+
 exclude:
   - _drafts
 
 collections:
-  contents:
-    output: true
-    permalink: /:collection/:title:output_ext
   helps:
     output: true
-    permalink: /:collection/:title:output_ext
+    permalink: /:collection/:title
   paper_reading:
     output: true
-    permalink: /:collection/:title:output_ext
+    permalink: /:collection/:title
 
 ordered_collections:
-  - contents
+  - posts
   - paper_reading
   - helps
 
