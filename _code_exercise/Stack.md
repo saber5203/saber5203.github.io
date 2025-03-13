@@ -6,7 +6,7 @@ category: code_exercise
 layout: post
 ---
 
-### 栈是一种只允许在表尾进行插入和删除操作的线性表
+**栈是一种只允许在表尾(栈顶)进行插入和删除操作的线性表**
 
 在**Python**中，栈可以通过**list**实现
 ```python
@@ -28,9 +28,9 @@ layout: post
     stack.splice(0, stack.length)   // 清空栈
 ```
 
-### LeetCode
+### 普通用法
 
-#### 20.有效的括号[<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="2 -5 24 24" width="24px" fill="#4B77D1"><g><rect fill="none" height="24" width="24"/></g><g><polygon points="6,6 6,8 14.59,8 5,17.59 6.41,19 16,9.41 16,18 18,18 18,6"/></g></svg>](https://leetcode-cn.com/problems/valid-parentheses/)
+#### LeetCode 20.有效的括号[<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="2 -5 24 24" width="24px" fill="#4B77D1"><g><rect fill="none" height="24" width="24"/></g><g><polygon points="6,6 6,8 14.59,8 5,17.59 6.41,19 16,9.41 16,18 18,18 18,6"/></g></svg>](https://leetcode-cn.com/problems/valid-parentheses/)
 
 **题目描述**：给定一个只包括 `(`, `)`, `{`, `}`, `[`, `]` 的字符串 `s`，判断字符串是否有效。
 
@@ -96,7 +96,7 @@ layout: post
 
 考察栈的基本使用，注意如果**最终栈不为空，即还有剩余的左括号，返回false**。
 
-#### 394.字符串解码[<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="2 -5 24 24" width="24px" fill="#4B77D1"><g><rect fill="none" height="24" width="24"/></g><g><polygon points="6,6 6,8 14.59,8 5,17.59 6.41,19 16,9.41 16,18 18,18 18,6"/></g></svg>](https://leetcode-cn.com/problems/decode-string/)
+#### LeetCode 394.字符串解码[<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="2 -5 24 24" width="24px" fill="#4B77D1"><g><rect fill="none" height="24" width="24"/></g><g><polygon points="6,6 6,8 14.59,8 5,17.59 6.41,19 16,9.41 16,18 18,18 18,6"/></g></svg>](https://leetcode-cn.com/problems/decode-string/)
 
 **题目描述**：给定一个经过编码的字符串，返回它解码后的字符串。
 
@@ -177,7 +177,9 @@ layout: post
     };
 ```
 
-#### 739.每日温度[<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="2 -5 24 24" width="24px" fill="#4B77D1"><g><rect fill="none" height="24" width="24"/></g><g><polygon points="6,6 6,8 14.59,8 5,17.59 6.41,19 16,9.41 16,18 18,18 18,6"/></g></svg>](https://leetcode-cn.com/problems/daily-temperatures/)
+### 单调栈
 
-#### 84.柱状图中最大的矩形[<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="2 -5 24 24" width="24px" fill="#4B77D1"><g><rect fill="none" height="24" width="24"/></g><g><polygon points="6,6 6,8 14.59,8 5,17.59 6.41,19 16,9.41 16,18 18,18 18,6"/></g></svg>](https://leetcode-cn.com/problems/largest-rectangle-in-histogram/)
+#### LeetCode 739.每日温度[<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="2 -5 24 24" width="24px" fill="#4B77D1"><g><rect fill="none" height="24" width="24"/></g><g><polygon points="6,6 6,8 14.59,8 5,17.59 6.41,19 16,9.41 16,18 18,18 18,6"/></g></svg>](https://leetcode-cn.com/problems/daily-temperatures/)
+
+#### LeetCode 84.柱状图中最大的矩形[<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="2 -5 24 24" width="24px" fill="#4B77D1"><g><rect fill="none" height="24" width="24"/></g><g><polygon points="6,6 6,8 14.59,8 5,17.59 6.41,19 16,9.41 16,18 18,18 18,6"/></g></svg>](https://leetcode-cn.com/problems/largest-rectangle-in-histogram/)
 
