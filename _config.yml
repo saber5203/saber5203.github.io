@@ -53,10 +53,14 @@ collections:
   paper_reading:
     output: true
     permalink: /:collection/:title
+  code_excercise:
+    output: true
+    permalink: /:collection/:title
 
 ordered_collections:
   - posts
   - paper_reading
+  - code_excercise
   - helps
 
 page_width: 800px
