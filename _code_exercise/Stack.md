@@ -1,5 +1,5 @@
 ---
-title: 算法刷题————栈
+title: 栈(Stack)
 author: saber5203
 date: 2025-03-13
 category: code_exercise
@@ -30,8 +30,7 @@ layout: post
 
 ## LeetCode
 
-[LeetCode 20.有效的括号](https://leetcode-cn.com/problems/valid-parentheses/)
--------------
+#### [<font color="black">20.有效的括号</font>](https://leetcode-cn.com/problems/valid-parentheses/)
 
 **题目描述**：给定一个只包括 `(`, `)`, `{`, `}`, `[`, `]` 的字符串 `s`，判断字符串是否有效。
 
@@ -97,8 +96,7 @@ layout: post
 
 考察栈的基本使用，注意如果**最终栈不为空，即还有剩余的左括号，返回false**。
 
-[LeetCode 394.字符串解码](https://leetcode-cn.com/problems/decode-string/)
--------------
+#### [<font color="black">394.字符串解码</font>](https://leetcode-cn.com/problems/decode-string/)
 
 **题目描述**：给定一个经过编码的字符串，返回它解码后的字符串。
 
@@ -179,7 +177,7 @@ layout: post
     };
 ```
 
-[LeetCode 739.每日温度](https://leetcode-cn.com/problems/daily-temperatures/)
--------------
-[LeetCode 84.柱状图中最大的矩形](https://leetcode-cn.com/problems/largest-rectangle-in-histogram/)
--------------
+#### [<font color="black">739.每日温度</font>](https://leetcode-cn.com/problems/daily-temperatures/)
+
+#### [<font color="black">84.柱状图中最大的矩形</font>](https://leetcode-cn.com/problems/largest-rectangle-in-histogram/)
+
