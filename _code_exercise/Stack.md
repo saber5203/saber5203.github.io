@@ -2,7 +2,7 @@
 title: 算法刷题————栈
 author: saber5203
 date: 2025-03-13
-category: code_excercise
+category: code_exercise
 layout: post
 ---
 
