@@ -1,6 +1,6 @@
 # Configurations
 title:            Saber5203's Blog
-longtitle:        Saber5203's Blog
+longtitle:        
 author:           saber5203
 email:            yanf_shi@163.com
 description: >
@@ -36,7 +36,7 @@ kramdown:
   syntax_highlighter_opts:
     guess_lang:           true
 
-syntax_highlighter_style: github
+syntax_highlighter_style: colorful
 
 markdown_ext:             markdown,mkdown,mkdn,mkd,md
 
@@ -73,6 +73,3 @@ plugins:
   - jekyll-feed
   - jekyll-readme-index
   - jemoji
-
-logging:
-  level: info

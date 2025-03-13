@@ -81,15 +81,10 @@
 
     {% capture listModifier %}{% if orderedList %}ol{% else %}ul{% endif %}{% endcapture %}
 
-    {% for rawnode in nodes %}
-        {% if rawnode == "" %}
+    {% for node in nodes %}
+        {% if node == "" %}
             {% continue %}
         {% endif %}
-
-        {{ log | debug }}
-        {{ log rawnode }}
-
-        {% assign node = rawnode | replace: '<a[^>]*>(.*?)</a>', '' %}
 
         {% assign currLevel = node | replace: '"', '' | slice: 0, 1 | times: 1 %}
 
@@ -116,7 +111,7 @@
         {% endif %}
 
         {% capture _hAttrToStrip %}{{ _workspace[0] | split: '>' | first }}>{% endcapture %}
-        {% assign header = _workspace[0] | replace: _hAttrToStrip, '' %}
+        {% assign header = _workspace[0] | replace: _hAttrToStrip, '' | split: '<a' | first | strip %}
 
         {% if include.item_class and include.item_class != blank %}
             {% capture listItemClass %} class="{{ include.item_class | replace: '%level%', currLevel | split: '.' | join: ' ' }}"{% endcapture %}
