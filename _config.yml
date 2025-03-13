@@ -73,3 +73,6 @@ plugins:
   - jekyll-feed
   - jekyll-readme-index
   - jemoji
+
+logging:
+  level: info

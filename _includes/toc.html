@@ -81,12 +81,15 @@
 
     {% capture listModifier %}{% if orderedList %}ol{% else %}ul{% endif %}{% endcapture %}
 
-    {% for node in nodes %}
-        {% if node == "" %}
+    {% for rawnode in nodes %}
+        {% if rawnode == "" %}
             {% continue %}
         {% endif %}
 
-        {% assign node = node | replace: '<a[^>]*>(.*?)</a>', '' %}
+        {{ log | debug }}
+        {{ log rawnode }}
+
+        {% assign node = rawnode | replace: '<a[^>]*>(.*?)</a>', '' %}
 
         {% assign currLevel = node | replace: '"', '' | slice: 0, 1 | times: 1 %}
 
