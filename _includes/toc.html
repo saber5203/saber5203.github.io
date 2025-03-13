@@ -86,6 +86,8 @@
             {% continue %}
         {% endif %}
 
+        {% assign node = node | replace: '<a[^>]*>(.*?)</a>', '' %}
+
         {% assign currLevel = node | replace: '"', '' | slice: 0, 1 | times: 1 %}
 
         {% if currLevel < minHeader or currLevel > maxHeader %}

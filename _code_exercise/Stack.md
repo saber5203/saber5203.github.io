@@ -6,7 +6,7 @@ category: code_exercise
 layout: post
 ---
 
-## 栈是一种只允许在表尾进行插入和删除操作的线性表
+### 栈是一种只允许在表尾进行插入和删除操作的线性表
 
 在**Python**中，栈可以通过**list**实现
 ```python
@@ -28,7 +28,7 @@ layout: post
     stack.splice(0, stack.length)   // 清空栈
 ```
 
-## LeetCode
+### LeetCode
 
 #### 20.有效的括号[<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="2 -5 24 24" width="24px" fill="#4B77D1"><g><rect fill="none" height="24" width="24"/></g><g><polygon points="6,6 6,8 14.59,8 5,17.59 6.41,19 16,9.41 16,18 18,18 18,6"/></g></svg>](https://leetcode-cn.com/problems/valid-parentheses/)
 
