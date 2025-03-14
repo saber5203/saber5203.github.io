@@ -95,7 +95,7 @@ require(["gitbook", "jquery"], function (gitbook, $) {
             });
     
             $copyCodeButton.click(function () {
-                var $codeContainer = $(this).siblings("code");
+                var $codeContainer = $(this).parent().siblings("code");
                 console.log($codeContainer)
                 if ($codeContainer) {
                     selectElementText($codeContainer.get(0));
