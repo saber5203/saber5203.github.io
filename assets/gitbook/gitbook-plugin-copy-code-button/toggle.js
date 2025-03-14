@@ -59,12 +59,28 @@ require(["gitbook", "jquery"], function (gitbook, $) {
             var $markdownheader = $('<div class="markdown-header"></div>');
             $markdownheader.css({
                 "display": "flex",
-                "justify-content": "between",
-                "background-color": "#f7f7f7",
-                "border": "1px solid #e7e7e7",
+                "justify-content": "space-between",
+                "height": "30px"
             });
             
-            var $languagename = $('<p class="language-name">Code</p>');
+            // 获取语言名称
+            var $languageDiv = $(this).closest('div[class*="language-"]'); // 定位最近的包含language-类名的div
+            var language = 'Code'; // 默认值
+            if ($languageDiv.length) {
+                var classes = $languageDiv.attr('class').split(/\s+/);
+                for (var i = 0; i < classes.length; i++) {
+                    var cls = classes[i];
+                    if (cls.startsWith('language-')) {
+                        var langPart = cls.split('-')[1]; // 提取语言部分（如typescript）
+                        if (langPart) {
+                            // 首字母大写处理
+                            language = langPart.charAt(0).toUpperCase() + langPart.slice(1);
+                        }
+                        break;
+                    }
+                }
+            }
+            var $languagename = $('<p class="language-name"></p>').text(language); // 动态设置语言名称
 
             var $copyCodeButton = $("<button class='copy-code-button'>Copy</button>");
             $copyCodeButton.css({ 
