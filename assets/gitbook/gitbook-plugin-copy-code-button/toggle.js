@@ -53,10 +53,31 @@ require(["gitbook", "jquery"], function (gitbook, $) {
 
     gitbook.events.bind("page.change", function () {
         $("pre").each(function () {
-            $(this).css("position", "relative");
+            $(this).css({"position": "relative", "display": "flex", "flex-direction": "column-reverse"});
+    
+            // 创建包裹按钮的容器
+            var $markdownheader = $('<div class="markdown-header"></div>');
+            $markdownheader.css({
+                "display": "flex",
+                "justify-content": "between",
+                "background-color": "#f7f7f7",
+                "border": "1px solid #e7e7e7",
+            });
+            
+            var $languagename = $('<p class="language-name">Code</p>');
 
             var $copyCodeButton = $("<button class='copy-code-button'>Copy</button>");
-            $copyCodeButton.css({ "position": "absolute", "top": "5px", "right": "5px", "padding": "3px", "background-color": "#313E4E", "color": "white", "border-radius": "5px", "-moz-border-radius": "5px", "-webkit-border-radius": "5px", "border": "2px solid #CCCCCC" });
+            $copyCodeButton.css({ 
+                "padding": "3px", 
+                "background-color": "#313E4E", 
+                "color": "white", 
+                "border-radius": "5px", 
+                "-moz-border-radius": "5px", 
+                "-webkit-border-radius": "5px", 
+                "border": "2px solid #CCCCCC",
+                "cursor": "pointer" // 添加手型指针
+            });
+    
             $copyCodeButton.click(function () {
                 var $codeContainer = $(this).siblings("code");
                 if ($codeContainer) {
@@ -80,7 +101,9 @@ require(["gitbook", "jquery"], function (gitbook, $) {
                 }
             });
 
-            $(this).append($copyCodeButton);
+            $markdownheader.append($languagename);
+            $markdownheader.append($copyCodeButton);
+            $(this).append($markdownheader);
         });
     });
 });
