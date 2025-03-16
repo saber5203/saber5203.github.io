@@ -216,7 +216,8 @@ layout: post
         const stack = [];
         const ans = new Array(temperatures.length).fill(0)
         for(let i=0;i<temperatures.length;i++){
-            while(stack.length!==0 && temperatures[i]>temperatures[stack[stack.length-1]]){ //单调递减栈
+            while(stack.length!==0 && temperatures[i]>temperatures[stack[stack.length-1]]){ 
+            //单调递减栈
             const index = stack.pop()
             ans[index] = i-index
             }
@@ -255,16 +256,19 @@ layout: post
         stack.push(-1) // 哨子，防止栈最后剩一个中间的最低元素
         let ans = 0
         for(let i=0;i<heights.length;i++){
-            while(stack.length!==0 && heights[i]<heights[stack[stack.length-1]]){ // 单调递增栈, 栈里面放索引
+            while(stack.length!==0 && heights[i]<heights[stack[stack.length-1]]){ 
+            // 单调递增栈, 栈里面放索引
             const index = stack.pop()
             // 计算以弹出元素为顶的最大矩形面积
-            ans = Math.max(ans, heights[index]*(i-stack[stack.length-1]-1)) // 无头无尾的宽度
+            ans = Math.max(ans, heights[index]*(i-stack[stack.length-1]-1)) 
+                                               // 无头无尾的宽度
             }
             stack.push(i)  
         }
         while(stack.length>1){
             const index = stack.pop()
-            ans = Math.max(ans, heights[index]*(heights.length-stack[stack.length-1]-1)) // 无头无尾的宽度
+            ans = Math.max(ans, heights[index]*(heights.length-stack[stack.length-1]-1)) 
+                                               // 无头无尾的宽度
         }
         return ans
     };
@@ -272,6 +276,6 @@ layout: post
 
 > ##### TIP
 >
-> 大于栈顶弹出————单调递减栈
+> 大于栈顶弹出————单调递减栈  
 > 小于栈顶弹出————单调递增栈
 {: .block-tip }
