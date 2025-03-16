@@ -256,11 +256,11 @@ layout: post
     >>> q.put((1, "Lucy"))
     >>> q.put((0, "Tom"))
     >>> i = 0
-    >>> while i < q.qsize()：
+    >>> while i < q.qsize():
     >>> 	print(q.get())
-    (0，"Tom")
-    (1，"Lucy")
-    (2，"Lisa")
+    (0, "Tom")
+    (1, "Lucy")
+    (2, "Lisa")
 ```
 
 在**JavaScript**中，优先队列可以通过**datastructures-js/priority-queue**库实现
