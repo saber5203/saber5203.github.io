@@ -101,11 +101,11 @@ layout: post
 
 **题目描述**：给定一个经过编码的字符串，返回它解码后的字符串。
 
-编码规则为：k[encoded_string],表示其中方括号内部的 encoded_string 正好重复 k 次。注意 k 保证为正整数。
+编码规则为：`k[encoded_string]`,表示其中方括号内部的`encoded_string`正好重复`k`次。注意`k`保证为正整数。
 
 你可以认为输入字符串总是有效的;输入字符串中没有额外的空格，且输入的方括号总是符合格式要求的。
 
-此外，你可以认为原始数据不包含数字，所有的数字只表示重复的次数 k ,例如不会出现像 3a 或 2[4] 这样的输入。
+此外，你可以认为原始数据不包含数字，所有的数字只表示重复的次数`k`,例如不会出现像`3a`或`2[4]`这样的输入。
 
 **示例 1**
 
@@ -185,5 +185,93 @@ layout: post
 
 #### LeetCode 739.每日温度[<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="2 -5 24 24" width="24px" fill="#4B77D1"><g><rect fill="none" height="24" width="24"/></g><g><polygon points="6,6 6,8 14.59,8 5,17.59 6.41,19 16,9.41 16,18 18,18 18,6"/></g></svg>](https://leetcode-cn.com/problems/daily-temperatures/)
 
+**题目描述**：给定一个整数数组`temperatures`，表示每天的温度，返回一个数组`answer`，其中`answer[i]`是指对于第`i`天，下一个更高温度出现在几天后。
+
+如果气温在这之后都不会升高，请在该位置用`0`来代替。
+
+**示例 1**
+
+*   输入：`temperatures = [73, 74, 75, 71, 69, 72, 76, 73]`
+*   输出：`[1, 1, 4, 2, 1, 1, 0, 0]`
+
+**示例 2**
+
+*   输入：`temperatures = [30, 40, 50, 60]`
+*   输出：`[1, 1, 1, 0]`
+
+**示例 3**
+
+*   输入：`temperatures = [30, 60, 90]`
+*   输出：`[1, 1, 0]`
+
+**提示**
+
+*   <code>1 <= temperatures.length <= 10<sup>5</sup></code>
+*   `30 <= temperatures[i] <= 100`
+
+**解决方案**
+
+```typescript
+    function dailyTemperatures(temperatures: number[]): number[] {
+        const stack = [];
+        const ans = new Array(temperatures.length).fill(0)
+        for(let i=0;i<temperatures.length;i++){
+            while(stack.length!==0 && temperatures[i]>temperatures[stack[stack.length-1]]){ //单调递减栈
+            const index = stack.pop()
+            ans[index] = i-index
+            }
+            stack.push(i)
+        }
+        return ans;
+    };
+```
+
 #### LeetCode 84.柱状图中最大的矩形[<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="2 -5 24 24" width="24px" fill="#4B77D1"><g><rect fill="none" height="24" width="24"/></g><g><polygon points="6,6 6,8 14.59,8 5,17.59 6.41,19 16,9.41 16,18 18,18 18,6"/></g></svg>](https://leetcode-cn.com/problems/largest-rectangle-in-histogram/)
 
+**题目描述**：给定`n`个非负整数，用来表示柱状图中各个柱子的高度。每个柱子彼此相邻，且宽度为`1`。
+
+求在该柱状图中，能够勾勒出来的矩形的最大面积。
+
+**示例 1**
+
+*   输入：`heights = [2,1,5,6,2,3]`
+*   输出：`10`
+*   解释：最大的矩形为图中红色区域，面积为`10`
+
+![示例1](https://assets.leetcode.com/uploads/2021/01/04/histogram.jpg "示例1")
+
+**示例 2**
+
+*   输入：`heights = [2,4]`
+*   输出：`4`
+
+![示例2](https://assets.leetcode.com/uploads/2021/01/04/histogram-1.jpg "示例2")
+
+**解决方案**
+
+```typescript
+    function largestRectangleArea(heights: number[]): number {
+        const stack = []
+        stack.push(-1) // 哨子，防止栈最后剩一个中间的最低元素
+        let ans = 0
+        for(let i=0;i<heights.length;i++){
+            while(stack.length!==0 && heights[i]<heights[stack[stack.length-1]]){ // 单调递增栈, 栈里面放索引
+            const index = stack.pop()
+            // 计算以弹出元素为顶的最大矩形面积
+            ans = Math.max(ans, heights[index]*(i-stack[stack.length-1]-1)) // 无头无尾的宽度
+            }
+            stack.push(i)  
+        }
+        while(stack.length>1){
+            const index = stack.pop()
+            ans = Math.max(ans, heights[index]*(heights.length-stack[stack.length-1]-1)) // 无头无尾的宽度
+        }
+        return ans
+    };
+```
+
+> ##### TIP
+>
+> 大于栈顶弹出————单调递减栈
+> 小于栈顶弹出————单调递增栈
+{: .block-tip }
