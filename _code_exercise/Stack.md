@@ -92,10 +92,10 @@ layout: post
     };
 ```
 
-> ##### TIP
+> ##### WARNING
 >
 > 考察栈的基本使用，注意如果**最终栈不为空，即还有剩余的左括号，返回false**
-{: .block-tip }
+{: .block-warning }
 
 #### LeetCode 394.字符串解码[<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="2 -5 24 24" width="24px" fill="#4B77D1"><g><rect fill="none" height="24" width="24"/></g><g><polygon points="6,6 6,8 14.59,8 5,17.59 6.41,19 16,9.41 16,18 18,18 18,6"/></g></svg>](https://leetcode-cn.com/problems/decode-string/)
 
@@ -276,6 +276,6 @@ layout: post
 
 > ##### TIP
 >
-> 大于栈顶弹出————单调递减栈  
-> 小于栈顶弹出————单调递增栈
+> 大于栈顶弹出——单调递减栈  
+> 小于栈顶弹出——单调递增栈
 {: .block-tip }
