@@ -60,7 +60,7 @@ layout: post
 *   将最后一个叶子节点(数组最后一个元素)移动到根节点
 *   循环比较新的根节点与其孩子节点的值(或者说优先级)，直到不再发生交换，或者到达叶子节点
 
-**堆排序**
+**堆排序O(NlogN)**
 
 *   将输入的数组建成最大堆。此时，堆顶元素就是最大值
 *   交换堆顶元素和末尾元素。此时，末尾元素是最大值
@@ -285,11 +285,114 @@ layout: post
 > ##### TIP
 >
 > **Topk最大**用**size为k**的**最小**优先队列/**小根**堆，新元素**大于队头/堆顶**时，弹出队头/堆顶并将新元素插入最小优先队列/小根堆  
-> **Topk最小**用**size为k**的**最大**优先队列/**大根**堆，新元素**小于队头/堆顶**时，弹出队头/堆顶并将新元素插入最大优先队列/大根堆
+> **Topk最小**用**size为k**的**最大**优先队列/**大根**堆，新元素**小于队头/堆顶**时，弹出队头/堆顶并将新元素插入最大优先队列/大根堆  
+> 也可以用**堆排序**思路：`CreateHeapFromArray(nums)`=>`swap(0, heapsize-1)`=>`heapsize-=1`=>`heapify(0)`，重复k次，原数组倒数第k个元素即为Topk最大/最小元素
 {: .block-tip }
 
 #### LeetCode 215.数组中的第K个最大元素[<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="2 -5 24 24" width="24px" fill="#4B77D1"><g><rect fill="none" height="24" width="24"/></g><g><polygon points="6,6 6,8 14.59,8 5,17.59 6.41,19 16,9.41 16,18 18,18 18,6"/></g></svg>](https://leetcode-cn.com/problems/kth-largest-element-in-an-array/)
 
+**题目描述**：给定一个整数数组`nums`和一个整数`k`,请返回数组中第`k`个最大的元素。
+
+请注意，你需要找的是数组排序后的第`k`个最大的元素，而不是第`k`个不同的元素。
+
+你必须设计并实现时间复杂度为`O(n)`的算法解决此问题。
+
+**示例 1**
+
+*   输入：`nums = [3,2,1,5,6,4], k = 2`
+*   输出：`5`
+
+**示例 2**
+
+*   输入：`nums = [3,2,3,1,2,4,5,5,6], k = 4`
+*   输出：`4`
+
+**提示**
+
+*   <code>1 <= k <= nums.length <= 10<sup>5</sup></code>
+*   <code>-10<sup>4</sup> <= nums[i] <= 10<sup>4</sup></code>
+
+**解决方案**
+
+```typescript
+    // 堆排序思路
+    function findKthLargest(nums: number[], k: number): number {
+        // 数组存储大根堆(完全二叉树)
+        const heapify = (nums: number[], heapsize: number, index: number)=>{ 
+            // 递归调整为大根堆，只用递归发生交换的孩子结点
+            let largest_index = index
+            const left_index = index*2+1
+            const right_index = index*2+2
+            if(left_index<heapsize && nums[left_index]>nums[largest_index]){
+                largest_index = left_index
+            }
+            if(right_index<heapsize && nums[right_index]>nums[largest_index]){
+                largest_index = right_index
+            }
+            if(largest_index!=index){
+                [nums[index], nums[largest_index]] = [nums[largest_index], nums[index]]
+                heapify(nums, heapsize, largest_index)
+            }
+        }
+        const n = nums.length
+        for(let i = Math.floor(n/2-1);i>=0;i--){ 
+            // 从最后一个非叶子节点开始构建最大堆
+            // 完全二叉树：leaf = node1 + node2(n为偶数) or leaf = node1 + node2 + 1(n为奇数)
+            heapify(nums, n, i)
+        }
+        for(let i = n-1;i>=n-k;i--){ 
+            // 每次将大根移动到最后，并将heapsize-1，循环k次后，倒数第k个元素即为第k大元素
+            [nums[0], nums[i]] = [nums[i], nums[0]]
+            heapify(nums, i, 0)
+        }
+        return nums[n-k]
+    };
+```
+
 #### LeetCode 347.前K个高频元素[<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="2 -5 24 24" width="24px" fill="#4B77D1"><g><rect fill="none" height="24" width="24"/></g><g><polygon points="6,6 6,8 14.59,8 5,17.59 6.41,19 16,9.41 16,18 18,18 18,6"/></g></svg>](https://leetcode-cn.com/problems/top-k-frequent-elements/)
+
+**题目描述**：给你一个整数数组`nums`和一个整数`k`，请你返回其中出现频率前`k`高的元素。你可以按**任意顺序**返回答案。
+
+**示例 1**
+
+*   输入：`nums = [1,1,1,2,2,3], k = 2`
+*   输出：`[1,2]`
+
+**示例 2**
+
+*   输入：`nums = [1], k = 1`
+*   输出：`[1]`
+
+**提示**
+
+*   <code>1 <= nums.length <= 10<sup>5</sup></code>
+*   `k`的取值范围是`[1, 数组中不相同的元素的个数]`
+*   题目数据保证答案唯一，换句话说，数组中前`k`个高频元素的集合是唯一的
+
+**解决方案**
+
+```python
+    // K-size遍历比较思路
+    class Solution:
+        def topKFrequent(self, nums: List[int], k: int) -> List[int]:
+            hashtable = {}
+            for num in nums:
+                hashtable[num] = hashtable.get(num, 0) + 1
+            nums_with_freq = list(zip(hashtable.values(), hashtable.keys()))
+            from queue import PriorityQueue
+            q = PriorityQueue(k)
+            for item in nums_with_freq:
+                if not q.full():
+                    q.put(item)
+                else:
+                    temp = q.get()
+                    q.put(max(item,temp,key=lambda x:x[0]))
+            
+            ans = []
+            while not q.empty():
+                ans.append(q.get()[1])
+
+            return ans
+```
 
 ### 合并K个排序链表
