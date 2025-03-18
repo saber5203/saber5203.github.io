@@ -6,6 +6,8 @@ category: code_exercise
 layout: post
 ---
 
+## 概念
+
 **堆是一种可以看作一颗完全二叉树的顺序表/数组**
 
 堆总是满足以下属性之一：
@@ -15,7 +17,7 @@ layout: post
 
 <strong>优先队列是一种可以完成插入和<span style="color: red">按照优先级出队</span>的队列，堆是实现优先队列的一种方式(顺序优先队列，数组存储)</strong>
 
-**由数组构建堆(优先队列)：**
+### 由数组构建堆(优先队列)：
 
 *   将数组元素视为一颗完全二叉树，从最后一个非叶子节点到根节点`(0-index)`依次进行调整`(heapify)`
 *   `heapify(i-index)`逻辑：比较当前父节点`(i)`与其左孩子`(2*i+1)`和右孩子`(2*i+2)`的值(或者说优先级)，若某个孩子的值大于(小于)父节点的值，则将该孩子与父节点交换，并对交换后的该孩子结点递归调用`heapify()`
@@ -49,22 +51,26 @@ layout: post
     };
 ```
 
-**堆(优先队列)的插入——节点上浮O(logN)**
+### 堆(优先队列)的插入——节点上浮O(logN)
 
 *   将新元素添加到数组末尾作为一个新的叶子节点
 *   循环比较新节点与其父节点的值(或者说优先级)，直到不再发生交换，或者到达根节点
 
-**堆(优先队列)的删除——节点下沉O(logN)**
+### 堆(优先队列)的删除——节点下沉O(logN)
 
 *   将根节点`(0-index)`弹出
 *   将最后一个叶子节点(数组最后一个元素)移动到根节点
 *   循环比较新的根节点与其孩子节点的值(或者说优先级)，直到不再发生交换，或者到达叶子节点
 
-**堆排序O(NlogN)**
+### 堆排序O(NlogN)
 
 *   将输入的数组建成最大堆。此时，堆顶元素就是最大值
 *   交换堆顶元素和末尾元素。此时，末尾元素是最大值
 *   将剩下`n-1`个元素重新构造成一个堆，重复执行上述步骤，直到剩下`0`个元素
+
+## 实现
+
+### 堆
 
 在**Python**中，堆可以通过**heapq**模块实现
 
@@ -217,6 +223,8 @@ layout: post
     }
 ```
 
+### 优先队列
+
 在**Python**中，优先队列可以通过**queue**模块实现
 
 ```python
@@ -279,6 +287,8 @@ layout: post
     pq.clear(); // 清空队列
     pq.isEmpty(); // 判断队列是否为空 return boolean
 ```
+
+## 例题
 
 ### Topk问题
 
@@ -396,3 +406,85 @@ layout: post
 ```
 
 ### 合并K个排序链表
+
+### 其他
+
+#### LeetCode 295.数据流的中位数[<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="2 -5 24 24" width="24px" fill="#4B77D1"><g><rect fill="none" height="24" width="24"/></g><g><polygon points="6,6 6,8 14.59,8 5,17.59 6.41,19 16,9.41 16,18 18,18 18,6"/></g></svg>](https://leetcode-cn.com/problems/find-median-from-data-stream/)
+
+**题目描述**：**中位数**是有序整数列表中的中间值。如果列表的大小是偶数，则没有中间值，中位数是两个中间值的平均值。
+
+*   例如`arr = [2,3,4]`的中位数是`3`。
+*   例如`arr = [2,3]`的中位数是`(2 + 3) / 2 = 2.5`。
+
+实现`MedianFinder`类：
+
+*   `MedianFinder()`初始化`MedianFinder`对象。
+*   `void addNum(int num)`将数据流中的整数`num`添加到数据结构中。
+*   `double findMedian()`返回到目前为止所有元素的中位数。与实际答案相差<code>10<sup>-5</sup></code>以内的答案将被接受。
+
+**示例 1**
+
+*   输入:  
+    `["MedianFinder", "addNum", "addNum", "findMedian", "addNum", "findMedian"]`  
+    `[[], [1], [2], [], [3], []]`
+*   输出:  
+    `[null, null, null, 1.5, null, 2.0]`
+*   解释:  
+    MedianFinder medianFinder = new MedianFinder();  
+    medianFinder.addNum(1);    // arr = [1]  
+    medianFinder.addNum(2);    // arr = [1, 2]  
+    medianFinder.findMedian(); // 返回 1.5 ((1 + 2) / 2)  
+    medianFinder.addNum(3);    // arr[1, 2, 3]  
+    medianFinder.findMedian(); // return 2.0
+
+**提示**
+
+*   <code>-10<sup>5</sup> <= num <= 10<sup>5</sup></code>
+*   在调用`findMedian`之前，数据结构中至少有一个元素
+*   最多<code>5 * 10<sup>4</sup></code>次调用`addNum`和`findMedian`
+
+**解决方案**
+
+用两个优先队列`max_queue 小根堆`和`min_queue 大根堆`分别记录大于中位数的数和小于等于中位数的数。
+
+新添加数小于等于`min_queue`的队头，则添加到`min_queue`中，反之添加到`max_queue`中。
+
+当累计添加的数的数量为奇数时，`min_queue`中的数的数量比`max_queue`多一个，此时中位数为`min_queue`的队头。
+
+当累计添加的数的数量为偶数时，两个优先队列中的数的数量相同，此时中位数为它们的队头的平均值。
+
+**注意保持`min_queue`和`max_queue`的大小关系**，若新添加数打破了上述关系，则需要将添加了新数值的队列的队头移动到另一个队列中。
+
+即将`min_queue`中的队头移动到`max_queue`中或是将`max_queue`中的队头移动到`min_queue`中。
+
+```python
+    class MedianFinder:
+
+        def __init__(self):
+            self.min_queue = [] # 小于等于中位数的值，大根堆
+            self.max_queue = [] # 大于等于中位数的值，小根堆
+            # N为奇数时，min_queue 中的数的数量比 max_queue 多一个，此时中位数为 min_queue 的队头
+            # N为偶数时，两个优先队列中的数的数量相同，此时中位数为它们的队头的平均值
+
+        def addNum(self, num: int) -> None:
+            # python默认小根堆，取相反值变成大根堆
+            if not self.min_queue or num<=-self.min_queue[0]:
+                heapq.heappush(self.min_queue, -num)
+                if len(self.min_queue) > len(self.max_queue)+1:
+                    heapq.heappush(self.max_queue, -heapq.heappop(self.min_queue))
+            else:
+                heapq.heappush(self.max_queue, num)
+                if len(self.max_queue) > len(self.min_queue):
+                    heapq.heappush(self.min_queue, -heapq.heappop(self.max_queue))
+
+        def findMedian(self) -> float:
+            if len(self.min_queue) == len(self.max_queue):
+                return (-self.min_queue[0]+self.max_queue[0])/2
+            else:
+                return -self.min_queue[0]
+
+    # Your MedianFinder object will be instantiated and called as such:
+    # obj = MedianFinder()
+    # obj.addNum(num)
+    # param_2 = obj.findMedian()
+```

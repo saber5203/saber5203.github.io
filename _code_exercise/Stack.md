@@ -6,7 +6,11 @@ category: code_exercise
 layout: post
 ---
 
+## 概念
+
 **栈是一种只允许在表尾(栈顶)进行插入和删除操作的线性表**
+
+## 实现
 
 在**Python**中，栈可以通过**list**实现
 ```python
@@ -27,6 +31,8 @@ layout: post
     stack[stack.length - 1]         // 访问栈顶元素
     stack.splice(0, stack.length)   // 清空栈
 ```
+
+## 例题
 
 ### 普通用法
 
