@@ -17,7 +17,7 @@ layout: post
 
 <strong>优先队列是一种可以完成插入和<span style="color: red">按照优先级出队</span>的队列，堆是实现优先队列的一种方式(顺序优先队列，数组存储)</strong>
 
-### 由数组构建堆(优先队列)：
+### 由数组构建堆(优先队列)
 
 *   将数组元素视为一颗完全二叉树，从最后一个非叶子节点到根节点`(0-index)`依次进行调整`(heapify)`
 *   `heapify(i-index)`逻辑：比较当前父节点`(i)`与其左孩子`(2*i+1)`和右孩子`(2*i+2)`的值(或者说优先级)，若某个孩子的值大于(小于)父节点的值，则将该孩子与父节点交换，并对交换后的该孩子结点递归调用`heapify()`
@@ -292,13 +292,6 @@ layout: post
 
 ### Topk问题
 
-> ##### TIP
->
-> **Topk最大**用**size为k**的**最小**优先队列/**小根**堆，新元素**大于队头/堆顶**时，弹出队头/堆顶并将新元素插入最小优先队列/小根堆  
-> **Topk最小**用**size为k**的**最大**优先队列/**大根**堆，新元素**小于队头/堆顶**时，弹出队头/堆顶并将新元素插入最大优先队列/大根堆  
-> 也可以用**堆排序**思路：`CreateHeapFromArray(nums)`=>`swap(0, heapsize-1)`=>`heapsize-=1`=>`heapify(0)`，重复k次，原数组倒数第k个元素即为Topk最大/最小元素
-{: .block-tip }
-
 #### LeetCode 215.数组中的第K个最大元素[<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="2 -5 24 24" width="24px" fill="#4B77D1"><g><rect fill="none" height="24" width="24"/></g><g><polygon points="6,6 6,8 14.59,8 5,17.59 6.41,19 16,9.41 16,18 18,18 18,6"/></g></svg>](https://leetcode-cn.com/problems/kth-largest-element-in-an-array/)
 
 **题目描述**：给定一个整数数组`nums`和一个整数`k`,请返回数组中第`k`个最大的元素。
@@ -404,6 +397,13 @@ layout: post
 
             return ans
 ```
+
+> ##### TIP
+>
+> **Topk最大**用**size为k**的**最小**优先队列/**小根**堆，新元素**大于队头/堆顶**时，弹出队头/堆顶并将新元素插入最小优先队列/小根堆  
+> **Topk最小**用**size为k**的**最大**优先队列/**大根**堆，新元素**小于队头/堆顶**时，弹出队头/堆顶并将新元素插入最大优先队列/大根堆  
+> 也可以用**堆排序**思路：`CreateHeapFromArray(nums)`=>`swap(0, heapsize-1)`=>`heapsize-=1`=>`heapify(0)`，重复k次，原数组倒数第k个元素即为Topk最大/最小元素
+{: .block-tip }
 
 ### 合并K个排序链表
 
