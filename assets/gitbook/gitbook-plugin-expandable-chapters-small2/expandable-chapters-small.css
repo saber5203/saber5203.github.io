@@ -19,9 +19,10 @@
 }
 
 .book .book-summary .exc-trigger {
-	position: absolute;
-  	left: 12px;
-  	top: 12px;
+    position: absolute;
+    left: 6px;
+    top: 0px;
+    padding: 8px;
 }
 
 .book .book-summary ul.summary li a,
@@ -31,9 +32,11 @@
 
 .book .book-summary .exc-trigger:before {
   	content: "\f105";
+	font-size: 20px;
 }
 
 .book .book-summary .expanded > a .exc-trigger:before,
 .book .book-summary .expanded > span .exc-trigger:before {
 	content: "\f107";
+	font-size: 20px;
 }
