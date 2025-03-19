@@ -22,6 +22,7 @@ require(['gitbook', 'jQuery'], function (gitbook, $) {
                 .find(ARTICLE_CHILDREN)
                 .prev()
                 .css('cursor', 'pointer')
+                .find('.exc-trigger')  // 只绑定到 .exc-trigger 元素
                 .on('click', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
