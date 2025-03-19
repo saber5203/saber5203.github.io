@@ -10,6 +10,7 @@
         // Fixes the anchor links scroll problem on mobile browsers
         function mobilePageScrollToAnchor(element) {
             $(element).closest('li.chapter').find('ul>li').removeClass('active');
+            $(element).closest('li.chapter').removeClass('active');
             $(element).parent().addClass('active');
             let target = $($(element).attr('href'));
             if (target.length) {
