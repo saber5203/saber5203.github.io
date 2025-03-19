@@ -22,13 +22,13 @@ require(['gitbook', 'jQuery'], function (gitbook, $) {
                 .find(ARTICLE_CHILDREN)
                 .prev()
                 .css('cursor', 'pointer')
-                .find('.exc-trigger')  // 只绑定到 .exc-trigger 元素
+                .append(TRIGGER_TEMPLATE)
+                .find('.exc-trigger')
                 .on('click', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
                     toggle($(e.target).closest(FOLDABLE));
-                })
-                .append(TRIGGER_TEMPLATE);
+                });
         } else {
             $(ARTICLES)
                 .parent(CHAPTER)
