@@ -22,7 +22,7 @@ layout: post
 
 在·Qwen-Audio·功能的基础上，作者进一步开发了`Qwen-Audio-Chat`(对话指令微调)，它允许来自各种音频和文本输入的输入，支持多轮对话并支持各种音频中心场景。
 
-![Qwen-AudioV各数据集性能](../images/Qwen-audio/Qwen-AudioV各数据集性能.png)
+![Qwen-AudioV1各数据集性能](../images/Qwen-audio/Qwen-AudioV1各数据集性能.png)
 
 ## 模型架构
 - **音频预处理**：重采样为`16kHz`, 使用`25ms`的窗口大小和`10ms`的跳幅将原始波形转换为`80`通道的梅尔频谱图。
@@ -32,9 +32,11 @@ layout: post
 
 ## 核心算法
 
+![V1架构](../images/Qwen-audio/V1架构.png)
+
 ### 多任务预训练
 
-![多任务预训练框架](../images/Qwen-audio/多任务预训练框架.png)
+*该阶段冻结LLM，仅训练音频编码器*
 
 目前音频处理领域，已经开发了不同的音频数据集来处理特定任务。
 
@@ -62,13 +64,15 @@ layout: post
 
 ### 监督微调
 
+*该阶段冻结音频编码器，微调LLM*
+
 在上述预训练基础上，采用基于**指令微调**来提高模型与人类意图保持一致的能力，从而产生了一个交互式聊天模型`Qwen-Audio-Chat`。
 
 为了有效地处理多音频对话和多个音频输入，我们引入了用`Audio id:`标记不同音频，其中`id`对应于音频输入对话的顺序。
 
 在对话格式方面，使用`ChatML(Openai)`格式构建我们的指令微调数据集。在这种格式中，每个交互的语句都标有两个特殊标记`<im_start>`和`<im_end>`，以方便对话终止。
 
-```The Data Format Example of Supervised Fine-Tuning.
+```chat_template.
   <im_start>user
   Audio 1: <audio>emov-db/141-168-0155.wav</audio>what does the speaker say?<im_end>
   <im_start>assistant
@@ -80,3 +84,58 @@ layout: post
 ```
 
 # Qwen-audio V2[<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="2 -5 24 24" width="24px" fill="#4B77D1"><g><rect fill="none" height="24" width="24"/></g><g><polygon points="6,6 6,8 14.59,8 5,17.59 6.41,19 16,9.41 16,18 18,18 18,6"/></g></svg>](https://arxiv.org/abs/2407.10759)
+
+## 概述
+
+与`V1`相比，`V2`不再使用复杂的分层标签相比，而是针对不同的数据和任务使用**自然语言提示(prompt)**，简化了预训练过程，并**进一步扩大了数据量**。
+
+在微调阶段，作者实施了**语音聊天**和**音频分析**两种不同的音频交互模式。在语音聊天模式下，用户无需输入文字，即可自由地与` Qwen2-Audio`进行语音交互；在音频分析模式下，用户可以在交互过程中提供音频和文本指令以供分析。需要注意的是，不需要使用任何系统提示在语音聊天和音频分析模式之间切换。
+
+微调之后，新增第三阶段后训练**DPO(Direct Preference Optimization, 直接偏好优化)**进行偏好训练。
+
+![Qwen-AudioV2各数据集性能](../images/Qwen-audio/Qwen-AudioV2各数据集性能.png)
+
+## 模型架构
+- **音频预处理**：重采样为`16kHz`, 使用`25ms`的窗口大小和`10ms`的跳幅将原始波形转换为`128`通道的梅尔频谱图。
+- **音频编码器**：`Whisper-large-v3`并添加了一个步幅为`2`的`time-dim`池化层，输出帧对应约`40ms`原始音频。
+- **大语言模型**：`Qwen-7B`，隐藏层维度`4096`。
+
+`Qwen2-Audio`的总参数为`8.2B`。
+
+## 核心算法
+
+![V2架构](../images/Qwen-audio/V2架构.png)
+
+### 多任务预训练
+
+用**自然语言提示**替换V1版本的**分层标签**，如上图所示。实验表明，使用语言提示可以提高更好的泛化能力和更好的指令跟随能力。
+
+### 监督微调
+
+依然在预训练基础上，采用指令微调
+
+将人类的音频方面的交互模式分为两类：
+* 音频分析：在音频分析模式下，用户可以灵活地让`Qwen2-Audio`分析各种音频，用户指令可以通过音频或文本给出。
+* 语音聊天：在语音聊天模式下，鼓励用户与`Qwen2-Audio`进行语音对话，提出各种各样的问题。
+
+为了模型一致性，两种交互模式是联合训练的，因此用户在使用过程中不会遇到模式差异化，也不需要使用单独的系统提示在不同模式之间切换，这两种模式在实际使用中无缝集成。
+
+### DPO后训练
+
+采用`DPO`来进一步优化模型以遵循人类偏好，DPO优化过程的损失函数如下：
+
+$$
+\mathcal{L}_{\text{DPO}}(p_\theta; p_{\text{ref}}) = -\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D}}\left[
+\log\sigma\left(
+\beta \underbrace{\log\frac{p_\theta(y_w|x)}{p_{\text{ref}}(y_w|x)}}_{\text{优选响应对数比}}
+- \beta \underbrace{\log\frac{p_\theta(y_l|x)}{p_{\text{ref}}(y_l|x)}}_{\text{劣选响应对数比}}
+\right)
+\right]
+$$
+
+* $p_\theta$: 当前策略(模型)
+* $p_{\text{ref}}$: 参考策略(模型)（以训练前参数$\theta_{\text{init}}$初始化得到），保持不变
+* $(x, y_w, y_l)$: 三元组数据，其中$x$是包含输入音频的输入序列，$y_w$和$y_l$分别是人工注释的好响应和坏响应
+* $D$: 三元组数据集
+* $\beta$: 温度系数，控制偏离参考策略的程度，超参数
+* $\sigma$: sigmoid函数 $\sigma(x) = 1/(1+e^{-x})$
