@@ -1,7 +1,7 @@
 ---
 title: Qwen Audio
 author: saber5203
-date: 2025-03-24
+date: 2025-04-06
 category: paper_reading
 layout: post
 ---
