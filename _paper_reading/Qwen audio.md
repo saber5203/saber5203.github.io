@@ -6,9 +6,9 @@ category: paper_reading
 layout: post
 ---
 
-# Qwen-audio V1[<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="2 -5 24 24" width="24px" fill="#4B77D1"><g><rect fill="none" height="24" width="24"/></g><g><polygon points="6,6 6,8 14.59,8 5,17.59 6.41,19 16,9.41 16,18 18,18 18,6"/></g></svg>](https://arxiv.org/abs/2311.07919)
+## Qwen-audio V1[<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="2 -5 24 24" width="24px" fill="#4B77D1"><g><rect fill="none" height="24" width="24"/></g><g><polygon points="6,6 6,8 14.59,8 5,17.59 6.41,19 16,9.41 16,18 18,18 18,6"/></g></svg>](https://arxiv.org/abs/2311.07919)
 
-## 概述
+### 概述
 
 跟随指令的音频语言模型在与人类的音频交互方面受到了广泛关注。然而，缺乏能够处理**各种音频类型和任务**的**通用**预训练音频模型。
 
@@ -24,17 +24,17 @@ layout: post
 
 ![Qwen-AudioV1各数据集性能](../images/Qwen-audio/Qwen-AudioV1各数据集性能.png)
 
-## 模型架构
+### 模型架构
 - **音频预处理**：重采样为`16kHz`, 使用`25ms`的窗口大小和`10ms`的跳幅将原始波形转换为`80`通道的梅尔频谱图。
 - **音频编码器**：`Whisper-large-v2(32层Transformer, 640M参数)`并添加了一个步幅为`2`的`time-dim`池化层，输出帧对应约`40ms`原始音频。
 - **大语言模型**：`Qwen-7B(32层Transformer Decoder, 7.7B参数)`，隐藏层维度`4096`。
 
 
-## 核心算法
+### 核心算法
 
 ![V1架构](../images/Qwen-audio/V1架构.png)
 
-### 多任务预训练
+#### 多任务预训练
 
 *该阶段冻结LLM，仅训练音频编码器*
 
@@ -62,7 +62,7 @@ layout: post
 * **时间戳标签**：`<|timestamps|>`或`<|notimestamps|>`标记决定了模型是否需要预测时间戳。与`Whisper`中使用的句子级时间戳不同，包含`<|timestamps|>`标签要求模型执行精细的单词级时间戳预测，缩写为`SRWT`(peech Recognition with Word-level Timestamps)。这些时间戳的预测与转录词交错：开始时间标记在每个转录标记之前预测，而结束时间标记在每个转录标记之后预测。根据实验，`SRWT`提高了模型将音频信号与时间戳对齐的能力。这种改进的对齐有助于模型全面理解语音信号，从而在许多任务（如语音识别和音频QA任务）中取得显著进步。
 * **输出指令**：最后，提供输出指令以进一步指定不同子任务的所需输出格式，然后开始文本输出。
 
-### 监督微调
+#### 监督微调
 
 *该阶段冻结音频编码器，微调LLM*
 
@@ -83,9 +83,9 @@ layout: post
   Based on the voice, the mood of the person is disgusted.<im_end>
 ```
 
-# Qwen-audio V2[<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="2 -5 24 24" width="24px" fill="#4B77D1"><g><rect fill="none" height="24" width="24"/></g><g><polygon points="6,6 6,8 14.59,8 5,17.59 6.41,19 16,9.41 16,18 18,18 18,6"/></g></svg>](https://arxiv.org/abs/2407.10759)
+## Qwen-audio V2[<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="2 -5 24 24" width="24px" fill="#4B77D1"><g><rect fill="none" height="24" width="24"/></g><g><polygon points="6,6 6,8 14.59,8 5,17.59 6.41,19 16,9.41 16,18 18,18 18,6"/></g></svg>](https://arxiv.org/abs/2407.10759)
 
-## 概述
+### 概述
 
 与`V1`相比，`V2`不再使用复杂的分层标签相比，而是针对不同的数据和任务使用**自然语言提示(prompt)**，简化了预训练过程，并**进一步扩大了数据量**。
 
@@ -95,22 +95,22 @@ layout: post
 
 ![Qwen-AudioV2各数据集性能](../images/Qwen-audio/Qwen-AudioV2各数据集性能.png)
 
-## 模型架构
+### 模型架构
 - **音频预处理**：重采样为`16kHz`, 使用`25ms`的窗口大小和`10ms`的跳幅将原始波形转换为`128`通道的梅尔频谱图。
 - **音频编码器**：`Whisper-large-v3`并添加了一个步幅为`2`的`time-dim`池化层，输出帧对应约`40ms`原始音频。
 - **大语言模型**：`Qwen-7B`，隐藏层维度`4096`。
 
 `Qwen2-Audio`的总参数为`8.2B`。
 
-## 核心算法
+### 核心算法
 
 ![V2架构](../images/Qwen-audio/V2架构.png)
 
-### 多任务预训练
+#### 多任务预训练
 
 用**自然语言提示**替换V1版本的**分层标签**，如上图所示。实验表明，使用语言提示可以提高更好的泛化能力和更好的指令跟随能力。
 
-### 监督微调
+#### 监督微调
 
 依然在预训练基础上，采用指令微调
 
@@ -120,7 +120,7 @@ layout: post
 
 为了模型一致性，两种交互模式是联合训练的，因此用户在使用过程中不会遇到模式差异化，也不需要使用单独的系统提示在不同模式之间切换，这两种模式在实际使用中无缝集成。
 
-### DPO后训练
+#### DPO后训练
 
 采用`DPO`来进一步优化模型以遵循人类偏好，DPO优化过程的损失函数如下：
 
