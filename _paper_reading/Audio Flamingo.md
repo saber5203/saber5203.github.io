@@ -73,11 +73,9 @@ $$
 $$
 
 其中：
-- $\mathbf{x}$ 为单通道音频
-- $\mathbf{y}_{\text{ins}}$ 为指令文本
-- $\mathbf{y}_{\text{out}}$ 为输出文本
-- $\mathbf{z} = (\mathbf{x}, \mathbf{y}_{\text{ins}}, \mathbf{y}_{\text{out}})$ 来表示一个单一样本
-- $(\mathbf{y}_{\text{out}})_{t}$ 为第 t个`token`， $(\mathbf{y}_{\text{out}})_{<t}$ 为前t-1个`token`
+- **$\mathbf{x}$** 为单通道音频，**$\mathbf{y}_{\text{ins}}$** 为指令文本，**$\mathbf{y}_{\text{out}}$** 为输出文本
+- **$\mathbf{z} = (\mathbf{x}, \mathbf{y}_{\text{ins}}, \mathbf{y}_{\text{out}})$** 来表示一个单一样本
+- **$(\mathbf{y}_{\text{out}})_{t}$** 为第 t个`token`， **$(\mathbf{y}_{\text{out}})_{<t}$** 为前t-1个`token`
 
 #### 交错样本构建与训练
 
