@@ -29,7 +29,7 @@ layout: post
 * **赋予音频语言模型无需微调快速适应新任务的能力**：作者实现了一种高效的检索方法，引入了`ICL`模板，并使用检索到的样本创建交错`ICL`数据集进行训练。此外，作者还引入了一种新颖的**交错样本交叉注意力掩码**。
 * **赋予音频语言模型与用户进行多轮对话的能力**。作者创建了两个基于`GPT-4`的多轮对话数据集，通过在这些数据集上微调`Audio Flamingo`来获得一个聊天模型。
 
-[代码仓库](https://github.com/NVIDIA/audio-flamingo/)  |  [演示Demo](https://audioflamingo.github.io/)
+[代码仓库](https://github.com/NVIDIA/audio-flamingo/) | [演示Demo](https://audioflamingo.github.io/)
 
 ### 模型架构
 
