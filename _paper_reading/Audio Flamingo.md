@@ -105,7 +105,7 @@ $$
 
 ![V1交叉注意力掩码](../images/Audio-Flamingo/V1交叉注意力掩码.png)
 
-对于由$J$个样本$z\_{\text{int}} = \{z^1, \cdots, z^J\}$组成的交错样本，其中$z^j = (x^j, y^j\_{\text{ins}}, y^j\_{\text{out}})$，对数似然是在所有输出上计算的：
+对于由$J$个样本$z\_{\text{int}} = \lbrace z^1, \cdots, z^J \rbrace$组成的交错样本，其中$z^j = (x^j, y^j\_{\text{ins}}, y^j\_{\text{out}})$，对数似然是在所有输出上计算的：
 
 $$
 \mathcal{L}_{\text{int}}(z_{\text{int}} = \{z^1, \cdots, z^J\}) = \sum_{j=1}^J \sum_{t=1}^{|y^j_{\text{out}}|} \log P_\theta \left( (y^j_{\text{out}})_t \mid z^{<j}, x^j, y^j_{\text{ins}}, (y^j_{\text{out}})^{<t} \right).
