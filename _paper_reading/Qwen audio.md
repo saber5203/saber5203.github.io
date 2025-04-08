@@ -8,6 +8,8 @@ layout: post
 
 ## Qwen-audio V1[<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="2 -5 24 24" width="24px" fill="#4B77D1"><g><rect fill="none" height="24" width="24"/></g><g><polygon points="6,6 6,8 14.59,8 5,17.59 6.41,19 16,9.41 16,18 18,18 18,6"/></g></svg>](https://arxiv.org/abs/2311.07919)
 
+![V1论文](../images/Qwen-audio/V1论文.png)
+
 ### 概述
 
 跟随指令的音频语言模型在与人类的音频交互方面受到了广泛关注。然而，缺乏能够处理**各种音频类型和任务**的**通用**预训练音频模型。
@@ -20,9 +22,11 @@ layout: post
 
 `Qwen-Audio`在各种基准测试任务中实现了优异的性能，而无需任何特定于任务的微调(`zero-shot`)。
 
-在·Qwen-Audio·功能的基础上，作者进一步开发了`Qwen-Audio-Chat`(对话指令微调)，它允许来自各种音频和文本输入的输入，支持多轮对话并支持各种音频中心场景。
+在`Qwen-Audio`功能的基础上，作者进一步开发了`Qwen-Audio-Chat`(对话指令微调)，它允许来自各种音频和文本输入的输入，支持多轮对话并支持各种音频中心场景。
 
 ![Qwen-AudioV1各数据集性能](../images/Qwen-audio/Qwen-AudioV1各数据集性能.png)
+
+[代码仓库](https://github.com/QwenLM/Qwen-Audio)
 
 ### 模型架构
 - **音频预处理**：重采样为`16kHz`, 使用`25ms`的窗口大小和`10ms`的跳幅将原始波形转换为`80`通道的梅尔频谱图。
@@ -85,6 +89,8 @@ layout: post
 
 ## Qwen-audio V2[<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="2 -5 24 24" width="24px" fill="#4B77D1"><g><rect fill="none" height="24" width="24"/></g><g><polygon points="6,6 6,8 14.59,8 5,17.59 6.41,19 16,9.41 16,18 18,18 18,6"/></g></svg>](https://arxiv.org/abs/2407.10759)
 
+![V2论文](../images/Qwen-audio/V2论文.png)
+
 ### 概述
 
 与`V1`相比，`V2`不再使用复杂的分层标签相比，而是针对不同的数据和任务使用**自然语言提示(prompt)**，简化了预训练过程，并**进一步扩大了数据量**。
@@ -94,6 +100,8 @@ layout: post
 微调之后，新增第三阶段后训练**DPO(Direct Preference Optimization, 直接偏好优化)**进行偏好训练。
 
 ![Qwen-AudioV2各数据集性能](../images/Qwen-audio/Qwen-AudioV2各数据集性能.png)
+
+[代码仓库](https://github.com/QwenLM/Qwen2-Audio)
 
 ### 模型架构
 - **音频预处理**：重采样为`16kHz`, 使用`25ms`的窗口大小和`10ms`的跳幅将原始波形转换为`128`通道的梅尔频谱图。
