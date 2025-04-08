@@ -75,8 +75,7 @@ $$
 其中：
 * $\mathbf{x}$ 为单通道音频，$\mathbf{y}\_{\text{ins}}$ 为指令文本，$\mathbf{y}\_{\text{out}}$ 为输出文本
 * $\mathbf{z} = (\mathbf{x}, \mathbf{y}\_{\text{ins}}, \mathbf{y}\_{\text{out}})$ 来表示一个单一样本
-* $(\mathbf{y}\_{\text{out}})\_{t}$ 为第 t个`token`
-* $(\mathbf{y}\_{\text{out}})\_{<t}$ 为前t-1个`token`
+* $(\mathbf{y}\_{\text{out}})\_{t}$ 为第 t个`token`，$(\mathbf{y}\_{\text{out}})\_{<t}$ 为前t-1个`token`
 
 #### 交错样本构建与训练
 
@@ -106,11 +105,7 @@ $$
 
 ![V1交叉注意力掩码](../images/Audio-Flamingo/V1交叉注意力掩码.png)
 
-对于由$J$个样本
-$z\_{\text{int}} = \{z^1, \cdots, z^J \}$
-组成的交错样本，其中
-$z^j = (x^j, y^j_{\text{ins}}, y^j_{\text{out}})$，
-对数似然是在所有输出上计算的：
+对于由$J$个样本$z\_{\text{int}} = \{z^1, \cdots, z^J\}$组成的交错样本，其中$z^j = (x^j, y^j\_{\text{ins}}, y^j\_{\text{out}})$，对数似然是在所有输出上计算的：
 
 $$
 \mathcal{L}_{\text{int}}(z_{\text{int}} = \{z^1, \cdots, z^J\}) = \sum_{j=1}^J \sum_{t=1}^{|y^j_{\text{out}}|} \log P_\theta \left( (y^j_{\text{out}})_t \mid z^{<j}, x^j, y^j_{\text{ins}}, (y^j_{\text{out}})^{<t} \right).
