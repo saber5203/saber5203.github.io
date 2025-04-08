@@ -76,7 +76,7 @@ layout: post
 
 在对话格式方面，使用`ChatML(Openai)`格式构建我们的指令微调数据集。在这种格式中，每个交互的语句都标有两个特殊标记`<im_start>`和`<im_end>`，以方便对话终止。
 
-```chat_template.
+```chattemplate
   <im_start>user
   Audio 1: <audio>emov-db/141-168-0155.wav</audio>what does the speaker say?<im_end>
   <im_start>assistant
