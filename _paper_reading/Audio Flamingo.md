@@ -60,10 +60,10 @@ Audio Flamingo 的架构包含四个主要组件：
 
 对于每一个数据集中的每个单一样本，作者构建对话模板如下：（Options仅出现在音频分类样本中）
 
-```chattemplate
-    <s>{task description}<audio>{instruction}
-    [Options:\n- option-1\n···- option-m]
-    <SEP>{output}<EOC></s>
+```markdown
+<s>{task description}<audio>{instruction}
+[Options:\n- option-1\n···- option-m]
+<SEP>{output}<EOC></s>
 ```
 
 使用最大似然估计（MLE）来训练模型，损失定义为：
@@ -74,7 +74,7 @@ $$
 
 其中：
 * $\mathbf{x}$ 为单通道音频，$\mathbf{y}\_{\text{ins}}$ 为指令文本，$\mathbf{y}\_{\text{out}}$ 为输出文本
-* $\mathbf{z} = (\mathbf{x}, \mathbf{y}\_{\text{ins}}, \mathbf{y}\_{\text{out}})$ 来表示一个单一样本
+* $\mathbf{z} = (\mathbf{x}, \mathbf{y}\_{\text{ins}}, \mathbf{y}\_{\text{out}})$ 表示一个单一样本
 * $(\mathbf{y}\_{\text{out}})\_{t}$ 为第 t个`token`，$(\mathbf{y}\_{\text{out}})\_{<t}$ 为前t-1个`token`
 
 #### 交错样本构建与训练
@@ -89,14 +89,14 @@ $$
 
 对于交错样本，作者构建对话模板如下：（Options仅出现在音频分类样本中）
 
-```chattemplate
-    <s>{task description}Here are similar samples.
-    <audio>{instruction1}<SEP>{output1}<EOC>
-    · · ·
-    <audio>{instructionk}<SEP>{outputk}<EOC>
-    <audio>{instruction}
-    Options:\n- option1\n···- optionm
-    <SEP>{output}<EOC></s>
+```markdown
+<s>{task description}Here are similar samples.
+<audio>{instruction-1}<SEP>{output-1}<EOC>
+· · ·
+<audio>{instruction-k}<SEP>{output-k}<EOC>
+<audio>{instruction}
+Options:\n- option-1\n···- option-m
+<SEP>{output}<EOC></s>
 ```
 
 对于交错样本的交叉注意力计算，作者设计了一种**交叉注意力掩码**（类似`Flamingo`的做法）。
@@ -111,12 +111,114 @@ $$
 \mathcal{L}_{\text{int}}(z_{\text{int}} = \{z^1, \cdots, z^J\}) = \sum_{j=1}^J \sum_{t=1}^{|y^j_{\text{out}}|} \log P_\theta \left( (y^j_{\text{out}})_t \mid z^{<j}, x^j, y^j_{\text{ins}}, (y^j_{\text{out}})^{<t} \right).
 $$
 
-这种交错损失与先前模型不同，先前模型仅在最后一个输出 $y_{\text{out}}^J$ 上计算损失，或者没有将先前的多模态输入 $x^{<j}$ 作为模型预测条件（例如`Flamingo`的交叉注意力仅计算最近的前一个图片）。作者期望上述损失函数可以帮助模型查看各种数量的`ICL`样本（包括当 $j = 1$ 时为零）以及相关的音频，从而提高鲁棒性和训练效率，尤其是在检索到类似样本的`ICL`样本时。
+这种交错损失与先前模型不同，先前模型仅在最后一个输出 $y_{\text{out}}^J$ 上计算损失，或者没有将先前的多模态输入 $x^{<j}$ 作为模型预测条件（例如`Flamingo`的交叉注意力仅计算最近的前一个图片）。作者期望上述损失函数可以帮助模型查看**各种数量**(因为<=J的各种数量的上下文样本的情况下的损失都有考虑)的`ICL`样本（包括当 $j = 1$ 时为零）以及相关的音频，从而提高鲁棒性和训练效率，尤其是在检索到类似样本的`ICL`样本时。
 
 #### 整体训练架构
 
-#### 多轮对话微调
+按照惯例，作者将训练分为预训练和监督微调两个阶段。
+
+预训练阶段只训练音频表示变换层和`gated xattn-dense`层，目的是获得这些层的良好初始化权重。监督微调阶段，解冻整个`LM`，并训练所有模块，除了音频编码器。
+
+作者在预训练阶段和监督微调阶段使用了不同的数据集。
+
+其选择依据如下：
+1. 数据质量：低质量数据集，包括那些包含低质量或噪声音频、低质量文本和不准确文本标注的数据集用于预训练。
+2. 数据多样性：多样性较低或标签分布存在强烈偏差的数据集用于预训练。
+3. 数据来源：包含AI生成内容的数据集主要用于预训练，而一些高质量子集可能用于`SFT`。
+4. 数据规模：非常大的数据集可以同时用于预训练和`SFT`。
+5. `ICL`数据集用于`SFT`阶段。
+
+因此，整体训练目标可以表示为：
+
+其中，$\lbrace D^{i}, i \in J \rbrace$为所有非交错训练数据集，$\lbrace D^{i'}\_{\text{int}}, i' \in J\_{\text{int}} \rbrace$为所有交错训练数据集。整体训练目标是每个数据集损失的加权混合：
+
+$$
+L = - \sum_{i \in I} \lambda_i \mathbb{E}_{z \sim D^i} \mathcal{L}(z) - \sum_{i' \in I_{\text{int}}} \lambda_{i'} \mathbb{E}_{z_{\text{int}} \sim D^{i'}_{\text{int}}} \mathcal{L}_{\text{int}}(z_{\text{int}})
+$$
+
+每个数据集的权重为$\lambda_i$，是常数超参数，对最终模型有巨大影响。作者根据数据集的大小、质量和多样性，在从不同数据集中采样时分配不同的权重（根据直觉来的）。
+
+#### 多轮对话数据集
+
+为了使模型在处理复杂的多轮对话方面拥有更强的能力，作者使用`GPT-4`生成了两个多轮对话数据集。
+
+作者基于强标签的`AudioSet-SL`和`MusicCaps`构建这些数据集，并使用`LAION-CLAP`嵌入进行阈值过滤以筛选掉不理想的样本。
+
+分别将这两个生成的数据集命名为 `AF-Dialogue-AudioSetSL` 和 `AF-Dialogue-MusicCaps`。
+
+对于多轮对话数据样本，作者构建对话模板如下：
+
+```markdown
+<s>The task is dialogue.<audio>
+user: {instruction-1}
+assistant: <SEP>{output-1}<EOC>
+· · ·
+user: {instruction-s}
+assistant: <SEP>{output-s}<EOC></s>
+```
+
+### 未来方向
+
+* 使用更大语言模型。假设更大的LM能拥有更好的知识和更强的遵循指令的能力，那么 `Audio Flamingo` 可以从更大的LM中受益
+* 研究转录之外的复杂语音相关任务。这要求模型在更加密集音频嵌入上进行条件化。在 `Audio Flamingo` 中，这种修改很简单，因为其架构足够灵活，可以通过添加新的交叉注意力头来支持新的嵌入
+* 构建一个可以输出文本和音频并遵循更复杂交错指令的音频语言模型。
+* 将更多模态统一起来。将模型的音频理解能力与视觉语言模型相结合，以便一个模型可以理解图像、视频和音频。
 
 ## Audio Flamingo V2[<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="2 -5 24 24" width="24px" fill="#4B77D1"><g><rect fill="none" height="24" width="24"/></g><g><polygon points="6,6 6,8 14.59,8 5,17.59 6.41,19 16,9.41 16,18 18,18 18,6"/></g></svg>](https://arxiv.org/abs/2503.03983)
 
 ![V2论文](../images/Audio-Flamingo/V2论文.png)
+
+### 概述
+
+*相较于V1变化较大，引入了CLAP和3B参数量的LLM，但是相比Qwen-audio那还是小很多的O(∩_∩)O*
+
+音频语言模型（ALMs）扩展了语言模型的音频理解能力。对比语言-音频预训练（CLAP）是首批**仅使用编码器**的 ALMs 之一，通过对比学习将音频和语言联系起来。在此基础上，后续工作引入了大型 ALMs（LALMs），它们将音频编码器与基于预训练解码器的LLMs集成，实现了开放式的音频问答（AQA）和自由形式的响应生成。
+
+然而，尽管有这些进展，即使是最先进的 LALMs 在专家级推理任务上的表现仍然不如基础任务，如事件分类。例如，Gemini-1.5-Pro这一最先进的模型在 MMAU 声音和音乐子集上仅达到 54.4%和 48.5%，仅仅是评估专家级音频推理的基准，作者将此归因于缺乏高质量的训练数据和稳健的音频表示。
+
+本文中，作者提出 `Audio Flamingo 2`（AF2），一种参数高效的 ALM，结合了 3B 参数的小型解码器 LM 和 203M 参数的音频编码器，实现了最先进的音频理解和推理能力。
+
+![V2性能](../images/Audio-Flamingo/V2性能.png)
+
+主要创新点： 
+1. 数据：近期研究表明，提高数据质量可以与通过扩展计算和模型规模所获得的性能提升相媲美，甚至超过。为此，作者提出了 `AudioSkills`，一个大规模、技能特定的 AQA 训练数据集，包含与每个音频配对的复杂、推理密集型问题。作者设计了针对七个不同技能的问题，主要目的是提高 ALM 的细粒度推理能力。 
+2. 音频编码：作者提出了 `AF-CLAP`，将 CLAP 训练扩展到超过 800 万个音频-字幕对，纳入合成数据，并提出了一种改进的对比损失，以获得更好的表示质量和鲁棒性。 
+3. 训练策略：作者提出了一种三阶段课程训练策略，以提升性能。
+4. 长音频理解：为了使模型能够理解和推理长音频，作者引入了 `LongAudio`，这是一个包含超过 260k 精心挑选的 AQA 实例的新数据集，音频时长从 30 秒到 5 分钟不等。`LongAudio` 涵盖了 10 多个音频类别，支持 6 个任务，包括字幕和 5 个基于推理的问答任务。作者还介绍了 `LongAudioBench`，这是一个用于评估长音频理解中 ALMs 的专家标注基准。
+
+*作者将音频语言模型（ALM） 分为两大类：Encoder-only ALMs 和 Decoder-based ALMs。*
+
+*仅编码器 ALM 是一类多模态语言模型（MLLM），它使用仅编码器 LM 和音频编码器学习音频和语言模态之间的共享空间。典型例子CLAP，一个受启发的开创性基于编码器的 ALM，在音频语言任务（如检索、零样本分类等）上取得了最先进的性能。在此之后，人们尝试通过扩展数据、引入额外的训练目标或使用合成数据来改进 CLAP。其他值得注意的工作包括 Wav2CLIP、AudioClip和 CoLLAT。*
+
+*基于解码器的 ALM：通过结合先进的LLMs， Pengi 这一开创性的基于解码器的 ALM 出现并在各种音频分类任务上实现了 SOTA 结果。 跟随 Pengi，大量大型 ALM 被引入，包括 LTU、LTU-AS、SALMONN、AudioGPT、GAMA、Audio Flamingo等完全开源模型，以及 Qwen-Audio和 Qwen-2-Audio等开放获取模型。大多数进展集中在模型规模和数据集的扩展上，在数据质量或音频编码器表示方面的进步非常有限。这最终转化为在分类和字幕等基础任务上的性能提升，但在专家级推理方面表现不佳，这是向通用人工智能（AGI）迈进所需的能力。*
+
+[项目网站（包含代码和checkpoint）](https://research.nvidia.com/labs/adlr/AF2/)
+
+### 模型架构
+
+![V2架构](../images/Audio-Flamingo/V2架构.png)
+
+主要包括四个组件：
+- AF-CLAP：一种基于 CLAP 的音频编码器，具有滑动窗口特征提取功能
+- 音频表示变换层以增加容量
+- 仅解码的语言模型
+- 用于音频条件化的门控交叉注意力（XATTN-Dense）层
+
+#### AF-CLAP
+
+CLAP，通过在音频-字幕对上预训练对比损失，展现出强大的音频理解和自然语言对齐能力。作者认为 CLAP 成为构建 ALMs 的合适选择。
+
+但是，由于与 SSL 预训练音频编码器相比性能不足，CLAP 在先前的工作中不太受欢迎。作者认为这是由于高质量音频-字幕对的可获得性有限，导致 CLAP 表示在组合推理和字幕的语言变异方面存在困难。
+
+作者通过**构建一个大规模、高质量的训练数据集**以及**改进训练目标以获得更好的表示鲁棒性**来解决问题并提出 CLAP 的改进版本 AF-CLAP。
+
+##### AF-CLAP Audio Encoder
+
+受近期在长视频图像上训练视觉语言模型成功的启发，作者从公开的长视频数据集中收集音频。
+
+作者从 `MiraData` 和 `Video Recap` 中选择了 10 万个多样化的视频，将这些视频分割成 10 秒的片段，并使用 `Qwen2-VL-2B-Instruct` 生成视频字幕，使用 `Qwen2-Audio` 生成音频字幕进行相似度对比。为确保多样性和减少冗余，过滤掉音频-视觉相似度超过阈值的片段 。然后，提示 GPT-4o（2024-05-13）生成以音频为中心的字幕，排除视觉属性并强调声音事件。
+
+通过上述做法，作者将 AF-CLAP 的训练数据集扩展至超过 800 万（10 秒）音频-字幕对。
+
+##### AF-CLAP Training Objective
+

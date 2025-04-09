@@ -76,15 +76,15 @@ layout: post
 
 在对话格式方面，使用`ChatML(Openai)`格式构建我们的指令微调数据集。在这种格式中，每个交互的语句都标有两个特殊标记`<im_start>`和`<im_end>`，以方便对话终止。
 
-```chattemplate
-  <im_start>user
-  Audio 1: <audio>emov-db/141-168-0155.wav</audio>what does the speaker say?<im_end>
-  <im_start>assistant
-  The speaker says in English, "Won’t you draw up, gentlemen.".<im_end>
-  <im_start>user
-  What’s the mood of the person?<im_end>
-  <im_start>assistant
-  Based on the voice, the mood of the person is disgusted.<im_end>
+```markdown
+<im_start>user
+Audio 1: <audio>emov-db/141-168-0155.wav</audio>what does the speaker say?<im_end>
+<im_start>assistant
+The speaker says in English, "Won’t you draw up, gentlemen.".<im_end>
+<im_start>user
+What’s the mood of the person?<im_end>
+<im_start>assistant
+Based on the voice, the mood of the person is disgusted.<im_end>
 ```
 
 ## Qwen-audio V2[<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="2 -5 24 24" width="24px" fill="#4B77D1"><g><rect fill="none" height="24" width="24"/></g><g><polygon points="6,6 6,8 14.59,8 5,17.59 6.41,19 16,9.41 16,18 18,18 18,6"/></g></svg>](https://arxiv.org/abs/2407.10759)
