@@ -230,6 +230,8 @@ CLAP，通过在音频-字幕对上预训练对比损失，展现出强大的音
 
 ![V2正负样本示例](../images/Audio-Flamingo/V2正负样本示例.png)
 
+![V2正负样本获取流程](../images/Audio-Flamingo/V2正负样本获取流程.png)
+
 **对比损失**：训练数据中的每个音频样本 $ x $ 现在有 $ M $ 正样本 $\lbrace P(x)\_m \rbrace \_{m=1}^M$ 和 $ M \times N $ 负样本 $\lbrace N(x)\_{m,n} \rbrace \_{m=1, n=1}^{M,N}$。令 $ A(x) $ 为 `HTS-AT large` 音频编码器的音频嵌入，并通过 MLP 投影；令 $ J(x) $ 为 `Flan-T5` 文本编码器的文本嵌入，并通过 MLP 投影。令 $ s(u,v) = \exp(u^Tv / \tau) $ 为具有温度 $ \tau $ 的相似度函数。训练目标是：
 
 $$
