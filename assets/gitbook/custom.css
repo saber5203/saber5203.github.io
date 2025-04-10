@@ -267,3 +267,8 @@ div.highlighter-rouge div.highlight pre.highlight code {
     word-break: break-word;
     flex-shrink: 0;
 }
+
+.markdown-section em {
+    font-style: italic;
+    color: #aaaaaa;
+}
