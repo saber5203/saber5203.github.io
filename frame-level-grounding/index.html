@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Audio examples and temporal evidence accompanying our paper on frame-level grounding for large audio-language models.">
+  <title>Frame-Level Grounding · Paper Supplement</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="data.js"></script>
+  <script defer src="page.js"></script>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>Augmenting Large Audio-Language Models with Frame-Level Grounding for Fine-Grained Temporal Perception</h1>
+      <p class="authors">Yanfeng Shi · Yan Song · Junhui Li · Tinggan Huang · Wu Guo · Haoyu Song · Ian McLoughlin</p>
+      <p class="affiliations">University of Science and Technology of China &nbsp; / &nbsp; Singapore Institute of Technology</p>
+      <nav aria-label="Page sections"><a href="#abstract">Abstract</a><a href="#method">Framework</a><a href="#grounding">Grounding Demo</a><a href="#reasoning">Reasoning Demo</a></nav>
+    </section>
+
+    <section id="abstract" class="section">
+      <h2>Abstract</h2>
+      <p>Large Audio-Language Models (LALMs) have substantially advanced general audio understanding, yet they remain limited in fine-grained temporal perception, particularly in precise event localization. Existing approaches primarily post-train LALMs to predict event boundaries as timestamp tokens. However, this generative formulation lacks explicit correspondence between the timestamp predictions and fine-grained acoustic evidence, limiting the precision and reliability of temporal localization. To address this issue, we augment the LALM with a dedicated frame-level grounding model while leveraging its semantic modeling capability to represent the event query. Specifically, the frozen LALM encodes the event query with audio as context, and the grounding model combines these query representations with fine-grained audio features to localize the target event at the frame level. Extensive experiments across diverse temporal grounding benchmarks demonstrate strong and consistent improvements over existing methods. Further evaluation shows that the grounding model can provide temporal evidence to support downstream reasoning.</p>
+    </section>
+
+    <section id="method" class="section">
+      <h2>Framework</h2>
+      <figure class="method-figure"><img src="assets/framework.png" width="1690" height="1050" alt="Paper Figure 1: a frozen LALM supplies query hidden states. A frozen audio encoder and a CNN supply acoustic features. Frame-adaptive cross-attention, fusion, a temporal decoder and a linear head predict event activity. The LALM can call this model as a temporal grounding tool."></figure>
+    </section>
+
+    <section id="grounding" class="section">
+      <h2>Grounding Demo</h2>
+      <p class="section-intro">Query-conditioned temporal grounding with Qwen3-Omni as the LALM.</p>
+      <div class="legend"><span><i class="target-key"></i>Ground truth</span><span><i class="prediction-key"></i>Prediction</span><span>All times in seconds</span></div>
+      <p class="interaction-hint">Click an event interval or time label to listen to that segment.</p>
+      <div id="grounding-examples"></div>
+    </section>
+
+    <section id="reasoning" class="section">
+      <h2>Temporal Reasoning Demo</h2>
+      <p class="section-intro">Temporal question answering with Qwen3-Omni as the LALM.</p>
+      <div id="reasoning-examples"></div>
+    </section>
+
+  </main>
+  <noscript><p>Enable JavaScript to view the audio examples.</p></noscript>
+</body>
+</html>
