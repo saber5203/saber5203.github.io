@@ -61,17 +61,20 @@ function timeline(duration, prediction, target) {
   return `<svg class="timeline seek-surface${target ? "" : " single-timeline"}" data-inset="10" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" role="group" aria-label="${escapeHTML(description)} Click an interval to listen to that segment."><g font-family="sans-serif" font-size="15" fill="#526764">${ticks}${target ? rects(target, 12, "#e4e9e6", "#7d908a", "ground truth") : ""}${rects(prediction, target ? 44 : 20, "var(--teal)", "var(--teal)", target ? "prediction" : "grounding model")}</g>${playhead(10, height - 26)}</svg>`;
 }
 
-function groundingCard(item, index, expanded) {
-  const detailIds = item.queries.map((_, i) => `details-${item.key}-${i}`);
+function groundingCard(item, index) {
+  const hasMultipleQueries = item.queries.length > 1;
+  const panelIds = item.queries.map((_, i) => `query-${item.key}-${i}`);
+  const queryOptions = hasMultipleQueries
+    ? `<div class="grounding-query-options" role="group" aria-label="Grounding queries">${item.queries.map((query, i) => `<button type="button" class="grounding-query-option" aria-pressed="${i === 0}" aria-controls="${panelIds[i]}">${escapeHTML(query.query)}</button>`).join("")}</div>`
+    : "";
   return `<article class="sample" id="example-${escapeHTML(item.key)}" data-duration="${item.duration}">
-    ${cardToggle(detailIds.join(" "), index, expanded)}
+    <div class="sample-header"><span>Example: ${index + 1}</span></div>
     ${player(item)}
-    ${item.queries.map((query, i) => `<div class="query-block"><div class="query-title"><span>${escapeHTML(query.query)}</span></div>
+    ${queryOptions}
+    ${item.queries.map((query, i) => `<div class="query-block grounding-query-panel" id="${panelIds[i]}" ${hasMultipleQueries && i > 0 ? "hidden" : ""}><div class="query-title"><span>${escapeHTML(query.query)}</span></div>
       ${timeline(item.duration, query.prediction, query.target)}
-      <div class="card-details" id="${detailIds[i]}" ${expanded ? "" : "hidden"}>
       <div class="interval-row reference-intervals" role="group" aria-label="Ground-truth intervals"><span class="interval-label">GT</span>${intervalTags(query.target)}</div>
       <div class="interval-row predicted-intervals" role="group" aria-label="Predicted intervals"><span class="interval-label">Pred.</span>${intervalTags(query.prediction)}</div>
-      </div>
       </div>`).join("")}
   </article>`;
 }
@@ -108,15 +111,25 @@ function reasoningCard(item, index) {
   </article>`;
 }
 
-let groundingIndex = 0;
 for (const dataset of ["audio_grounding", "desed", "TACOS", "UnAV-100", "clotho_moment"]) {
-  const items = window.PAPER_DEMO.grounding.filter(item => item.dataset === dataset);
+  const items = window.PAPER_DEMO.grounding
+    .filter(item => item.dataset === dataset)
+    .sort((a, b) => b.queries.length - a.queries.length);
   document.getElementById("grounding-examples").insertAdjacentHTML("beforeend",
-    `<div class="dataset-group"><h3>${escapeHTML(datasetNames[dataset] || dataset)}</h3>${items.map((item, index) => groundingCard(item, index, groundingIndex++ === 0)).join("")}</div>`);
+    `<div class="dataset-group"><h3>${escapeHTML(datasetNames[dataset] || dataset)}</h3>${items.map(groundingCard).join("")}</div>`);
 }
 document.getElementById("reasoning-examples").innerHTML = window.PAPER_DEMO.reasoning.map(reasoningCard).join("");
 
 document.querySelectorAll(".sample").forEach(setupCard);
+
+const backToTop = document.querySelector(".back-to-top");
+const updateBackToTop = () => { backToTop.hidden = window.scrollY < 600; };
+backToTop.addEventListener("click", () => {
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  window.scrollTo({top: 0, behavior: reducedMotion ? "auto" : "smooth"});
+});
+window.addEventListener("scroll", updateBackToTop, {passive: true});
+updateBackToTop();
 
 function setupCard(card) {
   const audio = card.querySelector("audio");
@@ -127,12 +140,24 @@ function setupCard(card) {
   let internalSeek = null;
   let animation = 0;
 
-  toggle.addEventListener("click", () => {
-    const expanded = toggle.getAttribute("aria-expanded") !== "true";
-    toggle.setAttribute("aria-expanded", String(expanded));
-    toggle.innerHTML = `${expanded ? "Hide details" : "Show details"}<span aria-hidden="true">${expanded ? "−" : "+"}</span>`;
-    card.querySelectorAll(".card-details").forEach(detail => { detail.hidden = !expanded; });
-    update();
+  if (toggle) {
+    toggle.addEventListener("click", () => {
+      const expanded = toggle.getAttribute("aria-expanded") !== "true";
+      toggle.setAttribute("aria-expanded", String(expanded));
+      toggle.innerHTML = `${expanded ? "Hide details" : "Show details"}<span aria-hidden="true">${expanded ? "−" : "+"}</span>`;
+      card.querySelectorAll(".card-details").forEach(detail => { detail.hidden = !expanded; });
+      update();
+    });
+  }
+
+  const queryOptions = [...card.querySelectorAll(".grounding-query-option")];
+  queryOptions.forEach(option => {
+    option.addEventListener("click", () => {
+      const panelId = option.getAttribute("aria-controls");
+      queryOptions.forEach(candidate => candidate.setAttribute("aria-pressed", String(candidate === option)));
+      card.querySelectorAll(".grounding-query-panel").forEach(panel => { panel.hidden = panel.id !== panelId; });
+      update();
+    });
   });
 
   function seek(time) {
