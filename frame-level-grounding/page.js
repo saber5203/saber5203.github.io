@@ -82,11 +82,13 @@ function groundingCard(item, index) {
 function reasoningCard(item, index) {
   const expanded = index === 0;
   const detailId = `details-${item.id}`;
+  const normalizedReference = String(item.reference).trim().toLowerCase().replace(/\s+/g, " ");
+  const correctChoiceIndex = item.choices.findIndex(choice => String(choice).trim().toLowerCase().replace(/\s+/g, " ") === normalizedReference);
   return `<article class="sample reasoning-sample" data-duration="${item.duration}">
     ${cardToggle(`${detailId}-flow`, index, expanded)}
     <p class="category">${escapeHTML(item.category)}</p>
     <h3 class="question">${escapeHTML(item.question)}</h3>
-    <div class="choices">${item.choices.map((choice, i) => `<span><b>${String.fromCharCode(65 + i)}.</b>${escapeHTML(choice)}</span>`).join("")}</div>
+    <div class="choices">${item.choices.map((choice, i) => `<span${i === correctChoiceIndex ? ` class="correct-choice" aria-label="Correct answer: ${String.fromCharCode(65 + i)}. ${escapeHTML(choice)}"` : ""}><b>${String.fromCharCode(65 + i)}.</b>${escapeHTML(choice)}${i === correctChoiceIndex ? '<i class="correct-mark" aria-hidden="true">✓</i>' : ""}</span>`).join("")}</div>
     ${player(item)}
     <ol class="reasoning-flow card-details" id="${detailId}-flow" ${expanded ? "" : "hidden"} aria-label="Grounding model-assisted reasoning sequence">
     ${item.calls.map((call, index) => `<li class="flow-step">
